@@ -34,14 +34,19 @@
 
         .full-layer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--gray); color: #333; z-index: 5000; overflow-y: auto; padding: 30px 5%; }
         .close-btn { position: fixed; top: 20px; right: 40px; font-size: 40px; cursor: pointer; color: var(--navy); }
-        .tab-btn { padding: 10px 15px; border: none; background: #ddd; cursor: pointer; font-weight: bold; border-radius: 5px; margin-right: 5px; }
-        .tab-btn.active { background: var(--gold); color: var(--navy); }
         
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
         th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
         th { background: var(--navy); color: var(--gold); }
+        .tab-btn { padding: 10px 15px; border: none; background: #ddd; cursor: pointer; font-weight: bold; border-radius: 5px; margin-right: 5px; }
+        .tab-btn.active { background: var(--gold); color: var(--navy); }
 
         .wa-chat { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; z-index: 2000; }
+        
+        /* FOOTER STYLING */
+        footer { background: #111; padding: 40px 8%; text-align: center; border-top: 5px solid var(--gold); margin-top: 50px; }
+        footer h2 { color: var(--gold); font-family: 'Cinzel', serif; margin-bottom: 10px; }
+        footer p { color: #888; font-size: 0.9rem; }
 
         @media print {
             .no-print, nav, footer, button, select, input, .close-btn { display: none !important; }
@@ -51,7 +56,6 @@
             .print-head { display: block !important; text-align: center; color: black; margin-bottom: 20px; }
         }
         .print-head { display: none; }
-        footer { background: #111; padding: 30px; text-align: center; border-top: 5px solid var(--gold); }
     </style>
 </head>
 <body>
@@ -82,7 +86,7 @@
         <img src="director.JPG" class="msg-img" alt="Director">
         <div class="msg-content">
             <h2>Director's Message</h2>
-            <p>Our vision is to empower the youth with technical expertise and moral values. We provide a platform where innovation meets practice.</p>
+            <p>Our vision is to empower the youth with technical expertise and moral values. We provide a platform where innovation meets practice, preparing students for the global industrial challenges.</p>
         </div>
     </div>
 
@@ -90,7 +94,7 @@
         <img src="principal.JPG" class="msg-img" alt="Principal">
         <div class="msg-content">
             <h2>Principal's Message</h2>
-            <p>Discipline and practical skills are the pillars of Jyoti ITC. Our modern labs ensure every student gains hands-on experience.</p>
+            <p>Discipline and practical skills are the pillars of Jyoti ITC. Our modern labs and dedicated faculty ensure that every student gains hands-on experience required for a successful career.</p>
         </div>
     </div>
 
@@ -139,38 +143,41 @@
 
         <div id="notTab" style="display:none; margin-top:20px;" class="no-print">
             <h3>Post Notice</h3>
-            <textarea id="noticeContent" style="width:100%; height:100px; margin-top:10px; padding:10px;"></textarea>
+            <textarea id="noticeContent" style="width:100%; height:100px; margin-top:10px; padding:10px;" placeholder="Type notice here..."></textarea>
             <button onclick="publishNotice()" style="width:100%; padding:15px; background:var(--navy); color:white; border:none; margin-top:10px; cursor:pointer;">PUBLISH</button>
         </div>
     </div>
 
     <div id="studentDashboard" class="full-layer">
         <span class="close-btn" onclick="closeLayer('studentDashboard')">×</span>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
             <h2 id="studentWelcome">Student Panel</h2>
             <button onclick="logout()" style="background:red; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;">LOGOUT</button>
         </div>
-        <h3>Download Study Material</h3>
-        <div id="pdfContainer" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px;"></div>
+        <div id="pdfContainer" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px;"></div>
     </div>
 
-    <div id="galleryLayer" class="full-layer"><span class="close-btn" onclick="closeLayer('galleryLayer')">×</span><h2 style="text-align:center;">Gallery</h2><div class="gallery-grid"><img src="jyoti-picture.jpg" alt="1"><img src="jyotiworkshop.jpg" alt="2"></div></div>
+    <div id="galleryLayer" class="full-layer"><span class="close-btn" onclick="closeLayer('galleryLayer')">×</span><h2 style="text-align:center;">Gallery</h2><div class="gallery-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;"><img src="jyoti-picture.jpg" alt="1" style="width:100%; border-radius:10px;"><img src="jyotiworkshop.jpg" alt="2" style="width:100%; border-radius:10px;"></div></div>
 
     <div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9000; justify-content:center; align-items:center;">
         <div style="background:white; padding:30px; border-radius:10px; width:320px; text-align:center; color: #333;">
-            <h3>Portal Login</h3>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Students: Enter Roll No as ID</p>
-            <input type="text" id="username" placeholder="Roll No / admin" style="width:100%; padding:10px; margin:10px 0;">
-            <input type="password" id="password" placeholder="Password (admin only)" style="width:100%; padding:10px; margin-bottom:15px;">
-            <button onclick="handleLogin()" style="background:var(--navy); color:white; padding:10px; width:100%; border:none; cursor:pointer;">LOGIN</button>
-            <p style="color:red; cursor:pointer; margin-top:10px;" onclick="document.getElementById('loginModal').style.display='none'">Close</p>
+            <h3 style="margin-bottom:10px;">Portal Login</h3>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Students use Roll No | Admin use Password</p>
+            <input type="text" id="username" placeholder="Roll No / admin" style="width:100%; padding:10px; margin-bottom:10px; border: 1px solid #ccc; border-radius: 5px;">
+            <input type="password" id="password" placeholder="Password (for Admin)" style="width:100%; padding:10px; margin-bottom:15px; border: 1px solid #ccc; border-radius: 5px;">
+            <button onclick="handleLogin()" style="background:var(--navy); color:white; padding:10px; width:100%; border:none; cursor:pointer; border-radius: 5px; font-weight: bold;">LOGIN</button>
+            <p style="color:red; cursor:pointer; margin-top:15px; font-size: 0.9rem;" onclick="document.getElementById('loginModal').style.display='none'">Close</p>
         </div>
     </div>
 
-    <footer class="no-print"><h2>JYOTI ITC ROSERA</h2><p>© 2026 | Created by ANKIT SINGH</p></footer>
+    <footer class="no-print">
+        <h2>JYOTI ITC ROSERA</h2>
+        <p>© 2026 | All Rights Reserved</p>
+        <p style="margin-top:10px; color: var(--gold); font-weight: bold;">Created by ANKIT SINGH</p>
+    </footer>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwo_jqfy4Nbqwxf7XgFqfLiy0ZmQiaMyzlgVF7Ajlzk1r0f-BmRSHj-LcxhB1yr1nIHGg/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxxs0o-FOAdvbKXKe-PjMO23jd1Cgsw34D7itZ4TmuMYbRseAkWdG8zmEgLJUXC77HV/exec';
         let allStudents = []; let tempAttendance = [];
 
         async function loadData() {
@@ -184,49 +191,48 @@
                 const qRes = await fetch(scriptURL + '?sheet=QUESTION BANK');
                 const qData = await qRes.json();
                 document.getElementById('pdfContainer').innerHTML = qData.slice(1).map(q => {
-                    let link = q[3];
-                    if(link.includes("github.com")) link = link.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/");
-                    return `<div style="background:white;padding:15px;border-radius:8px;border-left:5px solid red;box-shadow:0 4px 10px rgba(0,0,0,0.1);"><h4>${q[2]}</h4><p>${q[1]} | ${q[0]}</p><a href="${link}" target="_blank" style="color:blue; text-decoration:none; font-weight:bold;">Download PDF</a></div>`;
+                    let link = q[3].replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/");
+                    return `<div style="background:white;padding:20px;border-radius:10px;border-left:5px solid gold;box-shadow:0 4px 10px rgba(0,0,0,0.1);"><h4>${q[2]}</h4><p>${q[1]} | ${q[0]}</p><a href="${link}" target="_blank" style="color:blue;font-weight:bold;text-decoration:none;">Download PDF</a></div>`;
                 }).join('');
             } catch(e) { console.error("Error Loading"); }
         }
 
         function filterStudents() {
             const t = document.getElementById('tF').value.toLowerCase().trim();
-            const u = document.getElementById('uF').value.toLowerCase().replace("unit ", "").trim();
+            const uRaw = document.getElementById('uF').value;
+            const u = uRaw.replace("Unit ","").trim();
             if(!t || !u) return;
             let html = ""; let found = false;
             allStudents.slice(1).forEach((s, idx) => {
                 let sT = s[2] ? s[2].toString().toLowerCase().trim() : "";
                 let sU = s[3] ? s[3].toString().toLowerCase().trim() : "";
-                if(sT === t && (sU === u || sU === "unit "+u)) {
+                if(sT === t && (sU === u || sU === uRaw)) {
                     found = true;
-                    html += `<tr><td>${s[0]}</td><td>${s[1]}</td><td class="no-print"><button onclick="mark(${idx+1},'Present')" style="background:green;color:white;border:none;padding:5px;cursor:pointer; border-radius:3px;">P</button> <button onclick="mark(${idx+1},'Absent')" style="background:red;color:white;border:none;padding:5px;cursor:pointer; border-radius:3px;">A</button></td><td id="st-${idx+1}">--</td></tr>`;
+                    html += `<tr><td>${s[0]}</td><td>${s[1]}</td><td class="no-print"><button onclick="mark(${idx+1},'Present')" style="background:green;color:white;border:none;padding:5px;cursor:pointer;border-radius:3px;">P</button> <button onclick="mark(${idx+1},'Absent')" style="background:red;color:white;border:none;padding:5px;cursor:pointer;border-radius:3px;">A</button></td><td id="st-${idx+1}">--</td></tr>`;
                 }
             });
             document.getElementById('adminTableBody').innerHTML = found ? html : "<tr><td colspan='4'>No students found.</td></tr>";
         }
 
         function mark(idx, status) {
-            const roll = allStudents[idx][0];
+            const roll = allStudents[idx][0], name = allStudents[idx][1], trade = allStudents[idx][2];
+            const unit = document.getElementById('uF').value.replace("Unit ","").trim();
             tempAttendance = tempAttendance.filter(a => a.roll !== roll);
-            const unitClean = document.getElementById('uF').value.replace("Unit ","").trim();
-            tempAttendance.push({ roll, name: allStudents[idx][1], trade: allStudents[idx][2], unit: unitClean, status });
+            tempAttendance.push({ roll, name, trade, unit, status });
             document.getElementById(`st-${idx}`).innerText = status;
             document.getElementById(`st-${idx}`).style.color = (status === 'Present' ? 'green' : 'red');
         }
 
         async function submitAttendance() {
             const date = document.getElementById('attDate').value;
-            if(!date || tempAttendance.length === 0) return alert("Select Date & Mark Students!");
+            if(!date || tempAttendance.length === 0) return alert("Select Date & Mark Attendance!");
             document.getElementById('subAttBtn').innerText = "SUBMITTING...";
             for(let a of tempAttendance) { await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...a, date}) }); }
-            alert("Success!"); tempAttendance = []; document.getElementById('subAttBtn').innerText = "SUBMIT ATTENDANCE"; filterStudents();
+            alert("Attendance Submitted!"); tempAttendance = []; document.getElementById('subAttBtn').innerText = "SUBMIT ATTENDANCE"; filterStudents();
         }
 
         async function loadHistory() {
-            const d = document.getElementById('hisDate').value;
-            const t = document.getElementById('tHis').value.toLowerCase().trim();
+            const d = document.getElementById('hisDate').value, t = document.getElementById('tHis').value.toLowerCase().trim();
             const u = document.getElementById('uHis').value.replace("Unit ","").trim();
             document.getElementById('historyBody').innerHTML = "<tr><td colspan='4'>Searching...</td></tr>";
             const res = await fetch(scriptURL + '?sheet=ATTENDANCE');
@@ -258,27 +264,19 @@
         function handleLogin() {
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
-
-            // ADMIN LOGIN
-            if(u === 'admin' && p === 'admin123') {
-                openLayer('adminDashboard');
-                document.getElementById('loginModal').style.display = 'none';
-                return;
-            }
-
-            // STUDENT LOGIN (Search Roll No in Column 0 of STUDENTLIST)
+            if(u === 'admin' && p === 'admin123') { openLayer('adminDashboard'); document.getElementById('loginModal').style.display='none'; return; }
             const student = allStudents.find(s => s[0].toString().trim() === u);
             if(student) {
-                document.getElementById('studentWelcome').innerText = `Welcome, ${student[1]} (Roll: ${student[0]})`;
-                openLayer('studentDashboard');
-                document.getElementById('loginModal').style.display = 'none';
-            } else {
-                alert("Login Failed. Roll No not found in Institute Records.");
-            }
+                document.getElementById('studentWelcome').innerText = `Welcome, ${student[1]}`;
+                openLayer('studentDashboard'); document.getElementById('loginModal').style.display='none';
+            } else { alert("Login Failed! Please check Roll No."); }
         }
 
         function switchTab(t) {
-            ['attTab','hisTab','notTab'].forEach(id => document.getElementById(id).style.display = id.startsWith(t) ? 'block' : 'none');
+            ['attTab','hisTab','notTab'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.style.display = id.startsWith(t) ? 'block' : 'none';
+            });
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.onclick.toString().includes(t)));
         }
 
@@ -289,4 +287,3 @@
     </script>
 </body>
 </html>
-
