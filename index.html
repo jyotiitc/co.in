@@ -25,12 +25,16 @@
         .scroll-wrapper { flex-grow: 1; overflow: hidden; position: relative; }
         .notice-list { list-style: none; position: absolute; width: 100%; animation: scrollUp 15s linear infinite; padding: 10px 20px; color: #333; }
         @keyframes scrollUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }
-
+        
+         /* REQUIRED DOCUMENTS SECTION */
+        .docs-section { padding: 40px 8%; background: var(--gray); color: var(--navy); }
+        .docs-title { font-family: 'Cinzel', serif; text-align: center; margin-bottom: 30px; border-bottom: 3px solid var(--gold); display: inline-block; left: 50%; transform: translateX(-50%); position: relative; }
+        .docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .doc-item { background: white; padding: 20px; border-radius: 10px; text-align: center; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 4px solid var(--gold); }
+        
         .msg-container { background: white; color: #333; margin: 30px 8%; border-radius: 15px; padding: 30px; display: flex; gap: 30px; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .msg-reverse { flex-direction: row-reverse; background: var(--gray); }
         .msg-img { width: 220px; height: 220px; border: 4px solid var(--gold); border-radius: 10px; object-fit: cover; }
         .msg-content h2 { font-family: 'Cinzel', serif; color: var(--navy); border-bottom: 3px solid var(--gold); display: inline-block; margin-bottom: 15px; }
-        .msg-content p { line-height: 1.6; font-size: 0.95rem; }
 
         .full-layer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--gray); color: #333; z-index: 5000; overflow-y: auto; padding: 30px 5%; }
         .close-btn { position: fixed; top: 20px; right: 40px; font-size: 40px; cursor: pointer; color: var(--navy); }
@@ -42,20 +46,7 @@
         .tab-btn.active { background: var(--gold); color: var(--navy); }
 
         .wa-chat { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; z-index: 2000; }
-        
-        /* FOOTER STYLING */
-        footer { background: #111; padding: 40px 8%; text-align: center; border-top: 5px solid var(--gold); margin-top: 50px; }
-        footer h2 { color: var(--gold); font-family: 'Cinzel', serif; margin-bottom: 10px; }
-        footer p { color: #888; font-size: 0.9rem; }
-
-        @media print {
-            .no-print, nav, footer, button, select, input, .close-btn { display: none !important; }
-            .full-layer { position: static; display: block; background: white; padding: 0; }
-            table { border: 1px solid #000; width: 100%; }
-            th, td { border: 1px solid #000 !important; color: #000 !important; }
-            .print-head { display: block !important; text-align: center; color: black; margin-bottom: 20px; }
-        }
-        .print-head { display: none; }
+        @media print { .no-print { display: none !important; } .full-layer { position: static; display: block; background: white; } table { border: 1px solid #000; } }
     </style>
 </head>
 <body>
@@ -81,12 +72,26 @@
             <div class="scroll-wrapper"><ul id="instituteNoticeList" class="notice-list"></ul></div>
         </div>
     </section>
+    
+     <section class="docs-section no-print">
+        <h2 class="docs-title">Required Documents for Admission</h2>
+        <div class="docs-grid">
+            <div class="doc-item">10th Marksheet (Original)</div>
+            <div class="doc-item">Aadhar Card Copy</div>
+            <div class="doc-item">CLC / SLC Original</div>
+            <div class="doc-item">Caste Certificate</div>
+            <div class="doc-item">Residence Certificate</div>
+            <div class="doc-item">Income Certificate</div>
+            <div class="doc-item">6 Passport Photos</div>
+            <div class="doc-item">Mobile Number</div>
+        </div>
+    </section>
 
     <div class="msg-container no-print">
         <img src="director.JPG" class="msg-img" alt="Director">
         <div class="msg-content">
             <h2>Director's Message</h2>
-            <p>Our vision is to empower the youth with technical expertise and moral values. We provide a platform where innovation meets practice, preparing students for the global industrial challenges.</p>
+            <p>Our vision is to empower the youth with technical expertise and moral values.</p>
         </div>
     </div>
 
@@ -98,53 +103,36 @@
         </div>
     </div>
 
-     <a href="https://wa.me/919709506515" class="wa-chat no-print" target="_blank">💬 Chat with Us</a>
+    <a href="https://wa.me/919709506515" class="wa-chat no-print" target="_blank">💬 Chat with Us</a>
 
     <div id="adminDashboard" class="full-layer">
-        <div class="print-head">
-            <h1>JYOTI ITC ROSERA</h1>
-            <h3 id="pTitle">Attendance Report</h3>
-        </div>
         <span class="close-btn no-print" onclick="closeLayer('adminDashboard')">×</span>
         <div class="no-print" style="display:flex; justify-content:space-between; align-items:center;">
             <h2>Admin Control Panel</h2>
             <button onclick="logout()" style="background:red; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;">LOGOUT</button>
         </div>
-        
-        <div class="no-print" style="margin-top:20px; border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+        <div class="no-print" style="margin-top:20px;">
             <button class="tab-btn active" onclick="switchTab('att')">Attendance</button>
             <button class="tab-btn" onclick="switchTab('his')">History</button>
-            <button class="tab-btn" onclick="switchTab('not')">Manage Notice</button>
-            <button class="tab-btn" onclick="preparePrint()" style="background:#555; color:white;">Print Selected</button>
+            <button onclick="window.print()" style="padding:10px;">Print Report</button>
         </div>
-
-        <div id="attTab" style="margin-top:20px;">
-            <div class="no-print" style="margin-bottom:15px; display:flex; gap:10px;">
+        <div id="attTab">
+            <div style="margin:15px 0;">
                 <input type="date" id="attDate" style="padding:10px;">
                 <select id="tF" onchange="filterStudents()" style="padding:10px;"><option value="">Select Trade</option><option value="Electrician">Electrician</option><option value="Fitter">Fitter</option></select>
                 <select id="uF" onchange="filterStudents()" style="padding:10px;"><option value="">Select Unit</option><option value="Unit 1">Unit 1</option><option value="Unit 2">Unit 2</option></select>
             </div>
-            <table>
-                <thead><tr><th>Roll</th><th>Name</th><th class="no-print">Mark</th><th>Status</th></tr></thead>
-                <tbody id="adminTableBody"></tbody>
-            </table>
-            <button id="subAttBtn" class="no-print" onclick="submitAttendance()" style="width:100%; padding:15px; background:green; color:white; margin-top:10px; border:none; cursor:pointer; font-weight:bold;">SUBMIT TO SHEET</button>
+            <table><thead><tr><th>Roll</th><th>Name</th><th>Action</th><th>Status</th></tr></thead><tbody id="adminTableBody"></tbody></table>
+            <button id="subAttBtn" onclick="submitAttendance()" style="width:100%; padding:15px; background:green; color:white; margin-top:10px; border:none; cursor:pointer;">SUBMIT TO GOOGLE SHEET</button>
         </div>
-
-        <div id="hisTab" style="display:none; margin-top:20px;">
-            <div class="no-print" style="margin-bottom:15px; display:flex; gap:10px;">
+        <div id="hisTab" style="display:none;">
+            <div style="margin:15px 0;">
                 <input type="date" id="hisDate" style="padding:10px;">
                 <select id="tHis" style="padding:10px;"><option value="Electrician">Electrician</option><option value="Fitter">Fitter</option></select>
                 <select id="uHis" style="padding:10px;"><option value="Unit 1">Unit 1</option><option value="Unit 2">Unit 2</option></select>
-                <button onclick="loadHistory()" style="background:var(--navy); color:white; padding:10px 20px; border:none; cursor:pointer; border-radius:5px;">Fetch Record</button>
+                <button onclick="loadHistory()" style="padding:10px; background:var(--navy); color:white; border:none; cursor:pointer;">Fetch History</button>
             </div>
             <table id="historyTable"><thead><tr><th>Roll</th><th>Name</th><th>Trade | Unit</th><th>Status</th></tr></thead><tbody id="historyBody"></tbody></table>
-        </div>
-
-        <div id="notTab" style="display:none; margin-top:20px;" class="no-print">
-            <h3>Post Notice</h3>
-            <textarea id="noticeContent" style="width:100%; height:100px; margin-top:10px; padding:10px;" placeholder="Type notice here..."></textarea>
-            <button onclick="publishNotice()" style="width:100%; padding:15px; background:var(--navy); color:white; border:none; margin-top:10px; cursor:pointer;">PUBLISH</button>
         </div>
     </div>
 
@@ -157,26 +145,19 @@
         <div id="pdfContainer" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px;"></div>
     </div>
 
-    <div id="galleryLayer" class="full-layer"><span class="close-btn" onclick="closeLayer('galleryLayer')">×</span><h2 style="text-align:center;">Gallery</h2><div class="gallery-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;"><img src="jyoti-picture.jpg" alt="1" style="width:100%; border-radius:10px;"><img src="jyotiworkshop.jpg" alt="2" style="width:100%; border-radius:10px;"></div></div>
-
     <div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9000; justify-content:center; align-items:center;">
-        <div style="background:white; padding:30px; border-radius:10px; width:320px; text-align:center; color: #333;">
-            <h3 style="margin-bottom:10px;">Portal Login</h3>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Students use Roll No | Admin use Password</p>
-            <input type="text" id="username" placeholder="Roll No / admin" style="width:100%; padding:10px; margin-bottom:10px; border: 1px solid #ccc; border-radius: 5px;">
-            <input type="password" id="password" placeholder="Password (for Admin)" style="width:100%; padding:10px; margin-bottom:15px; border: 1px solid #ccc; border-radius: 5px;">
-            <button onclick="handleLogin()" style="background:var(--navy); color:white; padding:10px; width:100%; border:none; cursor:pointer; border-radius: 5px; font-weight: bold;">LOGIN</button>
-            <p style="color:red; cursor:pointer; margin-top:15px; font-size: 0.9rem;" onclick="document.getElementById('loginModal').style.display='none'">Close</p>
+        <div style="background:white; padding:30px; border-radius:10px; width:320px; text-align:center; color:#333;">
+            <h3>Portal Login</h3>
+            <p style="font-size: 0.8rem; color:#666;">Students: Use Roll No</p>
+            <input type="text" id="username" placeholder="ID" style="width:100%; padding:10px; margin:10px 0;">
+            <input type="password" id="password" placeholder="Password (Admin)" style="width:100%; padding:10px; margin-bottom:15px;">
+            <button onclick="handleLogin()" style="background:var(--navy); color:white; padding:10px; width:100%; border:none; cursor:pointer;">LOGIN</button>
+            <p style="color:red; cursor:pointer; margin-top:10px;" onclick="document.getElementById('loginModal').style.display='none'">Close</p>
         </div>
     </div>
 
-    <footer class="no-print">
-        <h2>JYOTI ITC ROSERA</h2>
-        <p>© 2026 | All Rights Reserved</p>
-        <p style="margin-top:10px; color: var(--gold); font-weight: bold;">Created by ANKIT SINGH</p>
-    </footer>
-
     <script>
+        // ZAROORI: Apna Naya Google Script URL Yahan Dalein
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxxs0o-FOAdvbKXKe-PjMO23jd1Cgsw34D7itZ4TmuMYbRseAkWdG8zmEgLJUXC77HV/exec';
         let allStudents = []; let tempAttendance = [];
 
@@ -192,7 +173,7 @@
                 const qData = await qRes.json();
                 document.getElementById('pdfContainer').innerHTML = qData.slice(1).map(q => {
                     let link = q[3].replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/");
-                    return `<div style="background:white;padding:20px;border-radius:10px;border-left:5px solid gold;box-shadow:0 4px 10px rgba(0,0,0,0.1);"><h4>${q[2]}</h4><p>${q[1]} | ${q[0]}</p><a href="${link}" target="_blank" style="color:blue;font-weight:bold;text-decoration:none;">Download PDF</a></div>`;
+                    return `<div style="background:white;padding:20px;border-radius:10px;border-left:5px solid gold;box-shadow:0 4px 10px rgba(0,0,0,0.1);"><h4>${q[2]}</h4><p>${q[1]} | ${q[0]}</p><a href="${link}" target="_blank" style="color:blue;font-weight:bold;">Download PDF</a></div>`;
                 }).join('');
             } catch(e) { console.error("Error Loading"); }
         }
@@ -208,10 +189,10 @@
                 let sU = s[3] ? s[3].toString().toLowerCase().trim() : "";
                 if(sT === t && (sU === u || sU === uRaw)) {
                     found = true;
-                    html += `<tr><td>${s[0]}</td><td>${s[1]}</td><td class="no-print"><button onclick="mark(${idx+1},'Present')" style="background:green;color:white;border:none;padding:5px;cursor:pointer;border-radius:3px;">P</button> <button onclick="mark(${idx+1},'Absent')" style="background:red;color:white;border:none;padding:5px;cursor:pointer;border-radius:3px;">A</button></td><td id="st-${idx+1}">--</td></tr>`;
+                    html += `<tr><td>${s[0]}</td><td>${s[1]}</td><td><button onclick="mark(${idx+1},'Present')" style="background:green;color:white;padding:5px;border:none;">P</button> <button onclick="mark(${idx+1},'Absent')" style="background:red;color:white;padding:5px;border:none;">A</button></td><td id="st-${idx+1}">--</td></tr>`;
                 }
             });
-            document.getElementById('adminTableBody').innerHTML = found ? html : "<tr><td colspan='4'>No students found.</td></tr>";
+            document.getElementById('adminTableBody').innerHTML = found ? html : "<tr><td colspan='4'>No data found.</td></tr>";
         }
 
         function mark(idx, status) {
@@ -220,7 +201,6 @@
             tempAttendance = tempAttendance.filter(a => a.roll !== roll);
             tempAttendance.push({ roll, name, trade, unit, status });
             document.getElementById(`st-${idx}`).innerText = status;
-            document.getElementById(`st-${idx}`).style.color = (status === 'Present' ? 'green' : 'red');
         }
 
         async function submitAttendance() {
@@ -228,7 +208,7 @@
             if(!date || tempAttendance.length === 0) return alert("Select Date & Mark Attendance!");
             document.getElementById('subAttBtn').innerText = "SUBMITTING...";
             for(let a of tempAttendance) { await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...a, date}) }); }
-            alert("Attendance Submitted!"); tempAttendance = []; document.getElementById('subAttBtn').innerText = "SUBMIT ATTENDANCE"; filterStudents();
+            alert("Attendance Submitted!"); tempAttendance = []; document.getElementById('subAttBtn').innerText = "SUBMIT TO GOOGLE SHEET"; filterStudents();
         }
 
         async function loadHistory() {
@@ -246,21 +226,6 @@
             document.getElementById('historyBody').innerHTML = html || "<tr><td colspan='4'>No records found.</td></tr>";
         }
 
-        function preparePrint() {
-            const date = document.querySelector('.tab-btn.active').innerText.includes("Attendance") ? document.getElementById('attDate').value : document.getElementById('hisDate').value;
-            const trade = document.querySelector('.tab-btn.active').innerText.includes("Attendance") ? document.getElementById('tF').value : document.getElementById('tHis').value;
-            const unit = document.querySelector('.tab-btn.active').innerText.includes("Attendance") ? document.getElementById('uF').value : document.getElementById('uHis').value;
-            document.getElementById('pTitle').innerText = `Report: ${trade} | ${unit} | Date: ${date}`;
-            window.print();
-        }
-
-        async function publishNotice() {
-            const txt = document.getElementById('noticeContent').value;
-            if(!txt) return;
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ noticeText: txt }) });
-            alert("Published!"); document.getElementById('noticeContent').value = ""; loadData();
-        }
-
         function handleLogin() {
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
@@ -269,14 +234,12 @@
             if(student) {
                 document.getElementById('studentWelcome').innerText = `Welcome, ${student[1]}`;
                 openLayer('studentDashboard'); document.getElementById('loginModal').style.display='none';
-            } else { alert("Login Failed! Please check Roll No."); }
+            } else { alert("Login Failed!"); }
         }
 
         function switchTab(t) {
-            ['attTab','hisTab','notTab'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.style.display = id.startsWith(t) ? 'block' : 'none';
-            });
+            document.getElementById('attTab').style.display = t === 'att' ? 'block' : 'none';
+            document.getElementById('hisTab').style.display = t === 'his' ? 'block' : 'none';
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.onclick.toString().includes(t)));
         }
 
@@ -287,6 +250,3 @@
     </script>
 </body>
 </html>
-
-
-
