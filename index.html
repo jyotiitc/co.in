@@ -92,23 +92,18 @@
         /* GALLERY FIX */
         .gallery-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
         .gallery-scroll img {
-            height: 150px; /* Reduced Size */
-            width: auto;   /* Maintain Aspect Ratio */
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border: 2px solid white;
-            transition: transform 0.3s;
+            height: 150px; width: auto; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid white; transition: transform 0.3s;
         }
         .gallery-scroll img:hover { transform: scale(1.05); }
 
-        /* EDITABLE CELLS FOR GRADING */
+        /* EDITABLE CELLS */
         .editable-cell { background: #fffbe6; cursor: text; }
         .editable-cell:focus { background: #fff; outline: 2px solid var(--primary); }
 
-        /* PRINT STYLES - STRICT */
+        /* PRINT STYLES */
         @media print {
             body * { visibility: hidden; }
-            header, footer, .login-nav, .sidebar, .no-print, #admin-controls, #entry-tools, #admin-filters, #notice-form-area { display: none !important; }
+            header, footer, .login-nav, .sidebar, .no-print, #admin-controls, #entry-tools, #admin-filters, #notice-form-area, #manage-staff-area { display: none !important; }
             
             #progress-card-area, #progress-card-area * { visibility: visible; }
             #admin-tool-container, #admin-tool-container * { visibility: visible; }
@@ -169,16 +164,16 @@
             <img src="director.JPG" alt="Director" class="director-img">
             <div>
                 <h2 style="margin-top:0;">Director's Message</h2>
-                <p>"Welcome to Jyoti ITC. We are committed to providing world-class technical education to empower the youth of Bihar..."</p>
-                <p><strong>- Sandeep Kumar</strong></p>
+                <p>"Welcome to Jyoti ITC. We are committed to providing world-class technical education..."</p>
+                <p><strong>- Director Name</strong></p>
             </div>
         </div>
         <h2 class="section-title" style="margin-top:30px;">🖼️ Gallery</h2>
         <div class="gallery-scroll">
-            <img src="jyoti-picture.jpg" alt="Gallery Image 1">
-            <img src="jyotilab.jpg" alt="Gallery Image 2">
-            <img src="classroom.jpeg" alt="Gallery Image 3">
-            <img src="jytiworkshop.jpg" alt="Gallery Image 4">
+            <img src="jyoti-picture.jpg">
+            <img src="classroom.jpeg">
+            <img src="jyotilab.jpg">
+            <img src="jyotiworkshop.jpg">
         </div>
     </div>
 
@@ -199,10 +194,12 @@
             <div class="sidebar">
                 <h3>Menu</h3>
                 <div class="sidebar-btn active" onclick="openEntryTool('attendance')">📝 Mark Attendance</div>
+                <div class="sidebar-btn" onclick="logout()">🚪 Logout</div>
             </div>
             <div class="admin-content">
                 <div id="staff-entry-area">
-                    <h3>Welcome Staff</h3>
+                    <h3>Welcome, <span id="staff-name-display" style="color:var(--accent);">Instructor</span></h3>
+                    <p><strong>Trade:</strong> <span id="staff-trade-display"></span></p>
                     <p>Please use the menu to mark attendance.</p>
                 </div>
             </div>
@@ -231,147 +228,157 @@
                 <div class="sidebar-btn" onclick="setupProgressCard('Electrician')">🖨️ Electrician Card</div>
 
                 <h3>Settings</h3>
-                <div class="sidebar-btn" style="background:#ffebee;" onclick="openSettings()">⚙️ Change Password</div>
+                <div class="sidebar-btn" style="background:#ffebee;" onclick="openSettings()">⚙️ Admin Password</div>
+                <div class="sidebar-btn" style="background:#e3f2fd;" onclick="openManageStaff()">👥 Manage Staff</div>
             </div>
 
-            <div class="admin-content">
+            <div class="admin-content" id="admin-content-area"></div>
+        </div>
+    </div>
+
+    <div id="entry-tool-container" style="display:none;">
+        <h3 id="tool-title" style="color:var(--primary); border-bottom:2px solid var(--accent); padding-bottom:5px;">Tool Name</h3>
+        <div style="margin-bottom:15px; background:#f9f9f9; padding:10px; border-radius:5px;">
+            
+            <div id="date-input-div" style="display:inline-block;">
+                <label>Date:</label> <input type="date" id="tool-date" style="width:130px;">
+            </div>
+            <div id="month-input-div" style="display:none;">
+                <label>Month:</label> 
+                <select id="tool-month" style="width:130px;">
+                    <option>January</option><option>February</option><option>March</option><option>April</option>
+                    <option>May</option><option>June</option><option>July</option><option>August</option>
+                    <option>September</option><option>October</option><option>November</option><option>December</option>
+                </select>
+            </div>
+            <div id="week-input-div" style="display:none;">
+                <label>Week No:</label> <select id="tool-week" style="width:100px;"></select>
+            </div>
+
+            <label>Trade:</label> <select id="tool-trade" style="width:100px;"><option value="Fitter">Fitter</option><option value="Electrician">Electrician</option></select>
+            <label>Unit:</label> <select id="tool-unit" style="width:60px;"><option value="1">1</option><option value="2">2</option></select>
+            <button class="btn btn-staff" onclick="loadStudentListForTool()">Load Students</button>
+        </div>
+        <form id="data-entry-form">
+            <div style="overflow-x:auto;"><table id="entry-table"></table></div>
+            <br><button type="button" class="btn btn-student" onclick="submitStaffData()">FINAL SUBMIT</button>
+        </form>
+    </div>
+
+    <div id="admin-tools-wrapper" style="display:none;">
+        
+        <div id="admin-tool-container" style="display:none;">
+            <div class="no-print" style="display:flex; justify-content:space-between;">
+                <h3 id="history-title">History</h3>
+                <button class="btn btn-staff" onclick="window.print()">Print Report</button>
+            </div>
+            
+            <div id="admin-filters" class="no-print" style="margin-bottom:15px;">
+                <label>Trade:</label> <select id="admin-trade" style="width:120px;"><option value="Fitter">Fitter</option><option value="Electrician">Electrician</option></select>
+                <label>Unit:</label> <select id="admin-unit" style="width:80px;"><option value="1">1</option><option value="2">2</option></select>
                 
-                <div id="entry-tool-container" style="display:none;">
-                    <h3 id="tool-title" style="color:var(--primary); border-bottom:2px solid var(--accent); padding-bottom:5px;">Tool Name</h3>
-                    <div style="margin-bottom:15px; background:#f9f9f9; padding:10px; border-radius:5px;">
-                        
-                        <div id="date-input-div" style="display:inline-block;">
-                            <label>Date:</label> <input type="date" id="tool-date" style="width:130px;">
-                        </div>
-                        <div id="month-input-div" style="display:none;">
-                            <label>Month:</label> 
-                            <select id="tool-month" style="width:130px;">
-                                <option>January</option><option>February</option><option>March</option><option>April</option>
-                                <option>May</option><option>June</option><option>July</option><option>August</option>
-                                <option>September</option><option>October</option><option>November</option><option>December</option>
-                            </select>
-                        </div>
-                        <div id="week-input-div" style="display:none;">
-                            <label>Week No:</label> 
-                            <select id="tool-week" style="width:100px;">
-                                </select>
-                        </div>
+                <span id="history-date-span" style="display:none;">
+                    <label>Date:</label> <input type="date" id="history-date">
+                </span>
+                <span id="history-month-span" style="display:none;">
+                    <label>Month:</label> 
+                    <select id="history-month" style="width:130px;">
+                        <option value="">All</option>
+                        <option>January</option><option>February</option><option>March</option><option>April</option>
+                        <option>May</option><option>June</option><option>July</option><option>August</option>
+                        <option>September</option><option>October</option><option>November</option><option>December</option>
+                    </select>
+                </span>
+                <span id="history-week-span" style="display:none;">
+                    <label>Week:</label> <select id="history-week" style="width:100px;"></select>
+                </span>
 
-                        <label>Trade:</label> <select id="tool-trade" style="width:100px;"><option value="Fitter">Fitter</option><option value="Electrician">Electrician</option></select>
-                        <label>Unit:</label> <select id="tool-unit" style="width:60px;"><option value="1">1</option><option value="2">2</option></select>
-                        <button class="btn btn-staff" onclick="loadStudentListForTool()">Load Students</button>
-                    </div>
-                    <form id="data-entry-form">
-                        <div style="overflow-x:auto;"><table id="entry-table"></table></div>
-                        <br><button type="button" class="btn btn-student" onclick="submitStaffData()">FINAL SUBMIT</button>
-                    </form>
-                </div>
-
-                <div id="admin-tool-container" style="display:none;">
-                    <div class="no-print" style="display:flex; justify-content:space-between;">
-                        <h3 id="history-title">History</h3>
-                        <button class="btn btn-staff" onclick="window.print()">Print Report</button>
-                    </div>
-                    
-                    <div id="admin-filters" class="no-print" style="margin-bottom:15px;">
-                        <label>Trade:</label> <select id="admin-trade" style="width:120px;"><option value="Fitter">Fitter</option><option value="Electrician">Electrician</option></select>
-                        <label>Unit:</label> <select id="admin-unit" style="width:80px;"><option value="1">1</option><option value="2">2</option></select>
-                        
-                        <span id="history-date-span" style="display:none;">
-                            <label>Date:</label> <input type="date" id="history-date">
-                        </span>
-                        
-                        <span id="history-month-span" style="display:none;">
-                            <label>Month:</label> 
-                            <select id="history-month" style="width:130px;">
-                                <option>January</option><option>February</option><option>March</option><option>April</option>
-                                <option>May</option><option>June</option><option>July</option><option>August</option>
-                                <option>September</option><option>October</option><option>November</option><option>December</option>
-                            </select>
-                        </span>
-
-                        <span id="history-week-span" style="display:none;">
-                            <label>Week:</label> 
-                            <select id="history-week" style="width:100px;">
-                                </select>
-                        </span>
-
-                        <button class="btn btn-admin" onclick="loadAdminHistory()">Load Data</button>
-                    </div>
-
-                    <div id="notice-form-area" style="display:none;" class="no-print">
-                        <input type="text" id="notice-title" placeholder="Title">
-                        <textarea id="notice-content" rows="4" placeholder="Content..."></textarea>
-                        <br><br><button class="btn btn-admin" onclick="publishNotice()">Publish</button>
-                    </div>
-
-                    <div id="admin-result-area" style="overflow-x:auto;"></div>
-                </div>
-
-                <div id="progress-card-area" style="display:none;">
-                    <div class="no-print" style="background:#ddd; padding:10px; border-radius:5px; margin-bottom:20px;">
-                        <label>Roll No:</label> <input type="number" id="pc-roll" placeholder="Ex: 5" style="width:100px;">
-                        <button class="btn btn-admin" onclick="generateProgressCard()">Generate</button>
-                        <button class="btn btn-student" onclick="window.print()">PRINT</button>
-                    </div>
-                    
-                    <div id="pc-content" style="border:2px solid black; padding:20px; max-width:800px; margin:auto;">
-                        <div style="text-align:center; border-bottom:2px solid black; padding-bottom:10px; margin-bottom:15px;">
-                            <h2 style="margin:0; text-transform:uppercase;">Jyoti Private I.T.I</h2>
-                            <p style="margin:5px 0;">Rosera, Samastipur | Affiliation No: DGET-6/4/71/2010-TC</p>
-                            <h3 style="margin:10px 0; text-decoration:underline;">PROGRESS CARD</h3>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <div style="width:48%;"><strong>Name:</strong> <span id="pc-name" style="border-bottom:1px dotted #000; padding:0 10px;">Loading...</span></div>
-                            <div style="width:48%;"><strong>Trade:</strong> <span id="pc-trade" style="border-bottom:1px dotted #000; padding:0 10px;">FITTER</span></div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <div style="width:48%;"><strong>Roll No:</strong> <span id="pc-roll-display" style="border-bottom:1px dotted #000; padding:0 10px;"></span></div>
-                            <div style="width:48%;"><strong>Session:</strong> 2024-26</div>
-                        </div>
-                        <table id="pc-table" style="width:100%; border:1px solid black; font-size:12px;">
-                            <thead>
-                                <tr style="background:#eee;">
-                                    <th style="width:50px;">Week</th>
-                                    <th>Exercise Done during the week</th>
-                                    <th style="width:60px;">Grade</th>
-                                    <th style="width:80px;">Inst. Sign</th>
-                                    <th style="width:80px;">Remark</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pc-tbody"></tbody>
-                        </table>
-                        <div style="margin-top:40px; display:flex; justify-content:space-between;">
-                            <div style="text-align:center;"><br>___________________<br>Trade Instructor</div>
-                            <div style="text-align:center;"><br>___________________<br>Principal</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="settings-area" style="display:none;" class="no-print">
-                    <h3>⚙️ Change Credentials</h3>
-                    <div style="background:#f9f9f9; padding:20px; border-radius:10px;">
-                        <h4>Admin Login</h4>
-                        <input type="text" id="new-admin-id" placeholder="New Admin ID">
-                        <input type="text" id="new-admin-pass" placeholder="New Admin Password">
-                        <hr>
-                        <h4>Staff Login</h4>
-                        <input type="text" id="new-staff-id" placeholder="New Staff ID">
-                        <input type="text" id="new-staff-pass" placeholder="New Staff Password">
-                        <br><br>
-                        <button class="btn btn-admin" onclick="saveCredentials()">Save Changes</button>
-                    </div>
-                </div>
-
+                <button class="btn btn-admin" onclick="loadAdminHistory()">Load Data</button>
             </div>
+
+            <div id="notice-form-area" style="display:none;" class="no-print">
+                <input type="text" id="notice-title" placeholder="Title">
+                <textarea id="notice-content" rows="4" placeholder="Content..."></textarea>
+                <br><br><button class="btn btn-admin" onclick="publishNotice()">Publish</button>
+            </div>
+
+            <div id="admin-result-area" style="overflow-x:auto;"></div>
+        </div>
+
+        <div id="progress-card-area" style="display:none;">
+            <div class="no-print" style="background:#ddd; padding:10px; border-radius:5px; margin-bottom:20px;">
+                <label>Roll No:</label> <input type="number" id="pc-roll" placeholder="Ex: 5" style="width:100px;">
+                <button class="btn btn-admin" onclick="generateProgressCard()">Generate</button>
+                <button class="btn btn-student" onclick="window.print()">PRINT</button>
+            </div>
+            
+            <div id="pc-content" style="border:2px solid black; padding:20px; max-width:800px; margin:auto;">
+                <div style="text-align:center; border-bottom:2px solid black; padding-bottom:10px; margin-bottom:15px;">
+                    <h2 style="margin:0; text-transform:uppercase;">Jyoti Private I.T.I</h2>
+                    <p style="margin:5px 0;">Rosera, Samastipur | Affiliation No: DGET-6/4/71/2010-TC</p>
+                    <h3 style="margin:10px 0; text-decoration:underline;">PROGRESS CARD</h3>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <div style="width:48%;"><strong>Name:</strong> <span id="pc-name" style="border-bottom:1px dotted #000; padding:0 10px;">Loading...</span></div>
+                    <div style="width:48%;"><strong>Trade:</strong> <span id="pc-trade" style="border-bottom:1px dotted #000; padding:0 10px;">FITTER</span></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <div style="width:48%;"><strong>Roll No:</strong> <span id="pc-roll-display" style="border-bottom:1px dotted #000; padding:0 10px;"></span></div>
+                    <div style="width:48%;"><strong>Session:</strong> 2024-26</div>
+                </div>
+                <table id="pc-table" style="width:100%; border:1px solid black; font-size:12px;">
+                    <thead>
+                        <tr style="background:#eee;">
+                            <th style="width:50px;">Week</th>
+                            <th>Exercise Done during the week</th>
+                            <th style="width:60px;">Grade</th>
+                            <th style="width:80px;">Inst. Sign</th>
+                            <th style="width:80px;">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pc-tbody"></tbody>
+                </table>
+                <div style="margin-top:40px; display:flex; justify-content:space-between;">
+                    <div style="text-align:center;"><br>___________________<br>Trade Instructor</div>
+                    <div style="text-align:center;"><br>___________________<br>Principal</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-area" style="display:none;" class="no-print">
+            <h3>⚙️ Change Admin Password</h3>
+            <div style="background:#f9f9f9; padding:20px; border-radius:10px;">
+                <input type="text" id="new-admin-id" placeholder="New Admin ID" autocomplete="off">
+                <input type="password" id="new-admin-pass" placeholder="New Admin Password" autocomplete="off">
+                <br><br>
+                <button class="btn btn-admin" onclick="saveAdminCredentials()">Save Changes</button>
+            </div>
+        </div>
+
+        <div id="manage-staff-area" style="display:none;" class="no-print">
+            <h3>👥 Manage Staff</h3>
+            <div style="background:#e3f2fd; padding:15px; border-radius:10px; margin-bottom:20px;">
+                <h4>Create New Staff</h4>
+                <input type="text" id="create-staff-user" placeholder="Username (e.g. staff1)" autocomplete="off">
+                <input type="password" id="create-staff-pass" placeholder="Password" autocomplete="off">
+                <input type="text" id="create-staff-name" placeholder="Staff Name (e.g. Rahul Sir)" autocomplete="off">
+                <select id="create-staff-trade">
+                    <option value="Fitter">Fitter</option>
+                    <option value="Electrician">Electrician</option>
+                </select>
+                <button class="btn btn-staff" onclick="createStaff()">Create</button>
+            </div>
+            <h4>Existing Staff List</h4>
+            <button class="btn btn-student" onclick="loadStaffList()">Refresh List</button>
+            <div id="staff-list-display" style="margin-top:10px;"></div>
         </div>
     </div>
 
     <div id="login-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
         <div style="background:white; padding:30px; border-radius:10px; width:300px; text-align:center;">
             <h3 id="login-title">Login</h3>
-            <input type="text" id="login-id" placeholder="ID" style="margin-bottom:10px;">
-            <input type="password" id="login-pass" placeholder="Password" style="margin-bottom:10px;">
+            <input type="text" id="login-id" placeholder="ID" style="margin-bottom:10px;" autocomplete="off">
+            <input type="password" id="login-pass" placeholder="Password" style="margin-bottom:10px;" autocomplete="off">
             <button class="btn btn-primary" onclick="processLogin()">Login</button>
             <button class="btn" style="background:#ccc;" onclick="document.getElementById('login-modal').style.display='none'">Close</button>
         </div>
@@ -383,34 +390,131 @@
     </footer>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxYHjteHyOpRY8oqwLOR74yJv64SdDuG-pGjHyOlgY7bTX4Ww_zVt9bckoyi9Hgri0QsA/exec";
+        // NEW URL UPDATED HERE
+        const API_URL = "https://script.google.com/macros/s/AKfycbwfEcSQKbyEhxEkAk-YzWaJiKSinoOfzhvncFLO68tnKg-VRkHzEUrDetybsJkqtjw7Ug/exec";
 
         const FITTER_EXERCISES = {
             1: "IMPORTANCE OF TRADE TRAINING, LIST OF TOOLS & MACHINERY", 2: "SAFETY ATTITUDE DEVELOPMENT & PPE", 3: "FIRST AID METHOD AND BASIC TRAINING", 4: "SAFE DISPOSAL OF WASTE MATERIALS", 5: "HAZARD IDENTIFICATION AND AVOIDANCE", 6: "SAFETY SIGN", 7: "PREVENTIVE MEASURES FOR ELECTRICAL ACCIDENTS", 8: "USES OF FIRE EXTINGUISHERS", 9: "DETAIL OF BENCH VICE, ANVIL, AND GRINDING MACHINE", 10: "SAFE USE OF TOOLS AND EQUIPMENTS", 11: "IDENTIFICATION OF TOOLS FOR MARKING & SAWING", 12: "MARKING OUT LINES, GRIPPING, HACKSAWING", 13: "SAWING DIFFERENT TYPES OF METALS", 14: "FILING CHANNEL, PARALLEL", 15: "FILING FLAT AND SQUARE (ROUGH FINISH)", 16: "MARKING PRACTICE WITH DIVIDERS, ODD LEG CALIPERS", 17: "MARKING, FILING, FLAT SQUARE AND CHECK USING TRY-SQUARE", 18: "FINDING CENTER OF ROUND BAR ('V' BLOCK)", 19: "CHIPPING, CHAMFERING, CHIP SLOTS AND OIL GROOVES", 20: "FILE STEPS AND FINISH WITH SMOOTH FILE", 21: "FILE RADIUS ALONG A MARKED LINE", 22: "MARK OFF AND DRILL THROUGH HOLE", 23: "DRILL AND TAP ON M.S. FLAT", 24: "PRACTICE USE OF DIFFERENT PUNCHES", 25: "MARKING GEOMETRICAL SHAPES & CUTTING WITH SNIPS", 26: "PUNCH HOLES USING HOLLOW AND SOLID PUNCHES", 27: "DO LAP AND BUTT JOINTS", 28: "DRILL FOR RIVETING", 29: "MARK OFF AND DRILL THROUGH HOLES", 30: "DRILL ON M.S FLAT", 31: "FILE RADIUS AND PROFILE TO SUIT GAUGE", 32: "DRILL THROUGH HOLE AND BLIND HOLES", 33: "FILE AND MAKE STEP FIT, ANGULAR FIT", 34: "MAKE SIMPLE OPEN AND SLIDING FITS", 35: "MAKE OPEN FITTING OF CURVED PROFILES", 36: "MAKE INSIDE SQUARE FIT", 37: "FILE FIT - COMBINED, OPEN ANGULAR AND SLIDING", 38: "File internal angles 30 minutes accuracy", 39: "Scrap on flat surfaces and curved surfaces", 40: "H FITTING", 41: "Precision drilling, reaming and tapping", 42: "Make dovetailed fitting and radius fitting", 43: "Make sliding diamond fitting", 44: "Scrape on internal surface and check", 45: "Fitter - Pipes and pipe fittings", 46: "Dovetail and dowel pin assembly", 47: "Make sliding fits assembly", 48: "Make open fitting of curved profiles", 49: "Form internal threads with taps to standard size", 50: "Shoulder turn : Square, filleted, beveled", 51: "Sharpening of - single point tools", 52: "Cut grooves - square, round V groove", 53: "MAKE A MANDREL - TURN DIAMETER", 54: "KNURL THE JOB", 55: "MAKE A BUSH STEP BORE-CUT RECESS", 56: "TURN TAPER (INTERNAL AND EXTERNAL)", 57: "TURN STANDARD TAPERS TO SUIT WITH GAUGE", 58: "PRACTICE THREADING USING TAPS, DIES ON LATHE", 59: "READ PRESSURE GAUGE, TEMPERATURE GAUGE", 60: "FACING AND CHAMFRING PRACTICE", 61: "STEP TURNING PRACTICE (DOUBLE EDGE)", 62: "PIPE BENDING BY CODED HEATING", 63: "THREADING ON ROUND ROD", 64: "SQUARE ANGULAR MARKING AND FILING", 65: "KEY WAY AND SLOTS MARKING PRACTICE", 66: "INTERNAL DOUBLE SQUARE FITTING", 67: "EXTERNAL, INTERNAL, RADIUS FITTING", 68: "AN INTERNAL CROSS FITTING", 69: "SLIDING FITTING", 70: "INTERNAL HEAD AND TAIL FITTING", 71: "STAR MARKING PRACTICE", 72: "INTERNAL STAR FITTING PRACTICE", 73: "FASTEN MECHANICAL COMPONENTS", 74: "MARKING AN OIL SLOT", 75: "MAKING TRIANGULAR FITTING", 76: "MAKING DOUBLE SQUARE AND RADIUS FITTING"
         };
-        const ELECT_EXERCISES = {}; 
-        for(let i=1; i<=76; i++) ELECT_EXERCISES[i] = "Electrician Exercise " + i;
+        const ELECT_EXERCISES = {
+            1: "VISIT VARIOUS SECTION OF THE INSTITUTE AND LOCATION OF ELECTRICAL INSTALLATION",
+            2: "IDENTIFY SAFETY SYMBOLS AND HAZARDS",
+            3: "PREVENTIVE MEASURES FOR ELECTRICAL ACCIDENT AND PRACTICE STEPS",
+            4: "SAFETY AND USE OF FIRE FIGHTING",
+            5: "PRACTICE ELEMENTRY FIRST AID",
+            6: "DISPOSAL PROCEDURE OF WASTE MATERIALS",
+            7: "USE OF PERSONAL PROTECTIVE EQUIPMENTS",
+            8: "PRACTICE OF CLEANLINESS AND PROCEDURE TO MAINTAIN IT",
+            9: "IDENTIFY TRADE TOOLS AND MACHINERIES",
+            10: "PRACTICE SAFE METHOD OF LIFTING AND HANDLING OF TOOLS EQUIPMENTS",
+            11: "SELECT PROPER TOOLS FOR OPERATION AND PRECAUTION",
+            12: "CARE AND MAINTENANCE OF TRADE TOOLS",
+            13: "OPERATION OF ALLIED TRADE TOOLS",
+            14: "HACKSAWING AND FILING PRACTICE",
+            15: "PREPARE TERMINALS OF CABLE END",
+            16: "PRACTICE OF SKINNING TWISTING AND CRIMPING",
+            17: "IDENTIFY CABLE AND MEASURE CONDUCTOR SIZE USING SWG OR MICROMETER",
+            18: "MAKE SIMPLE TWIST MARRIED ,TEE AND WESTERN UNION JOINTS",
+            19: "MAKE A BRITANIA STRAIGHT JOINT AND T JOINT AND RAT TAIL",
+            20: "PRACTICE IN SOLDERING OF JOINTS/ LUGS",
+            21: "IDENTIFY VARIOUS PARTS SKINING AND DRESSING OF UNDER GROUND CABLE",
+            22: "MAKE STRAIGHT JOINT OF DIFFERENT TYPES OF UNDER GROUND CABLE",
+            23: "TEST INSULATION RESISTANCE OF UNDER GROUND CABLE USING MEGGER",
+            24: "TEST UNDER GROUND CABLES FOR FAULT AND REMOVE THE FAULT",
+            25: "IDENTIFY OHM'S LAW OR KNOW DIFFERENT RESISTORS VALUE",
+            26: "MEASURE CURRENT AND VOLTAGE IN AN ELECTRIC CIRCUIT TO KIRCHHOFFS LAW",
+            27: "VERIFY LAWS OF SERIES AND PARALLEL CIRCUIT WITH VOLTAGE SOURCE IN DIFFERENT COMBINATION",
+            28: "MEASURE VOLTAGE, CURRENT AND RESISTANCE INDIVIDUAL",
+            29: "MEASURE CURRENT, VOLTAGE AND ANALYSE THE EFFECT OF SHORT AND OPEN IN SERIES CIRCUIT",
+            30: "MEASURE VOLTAGE, CURRENT EFFECT OF SHORTS AND OPEN IN PARALLEL CIRCUIT",
+            31: "MEASURE RESISTANCE USING VOLTAGE DROP METHOD",
+            32: "MEASURE CURRENT AND VOLTAGE AND ANALYSE THE EFFECT OF SHORT AND OPENS IN PARALLEL CIRCUIT",
+            33: "MEASURE RESISTANCE USING VOLTAGE DROP METHOD",
+            34: "MEASURE RESISTANCE USING WHEATSTONE BRIDGE",
+            35: "DETERMINE THE THERMAL EFFECT OF ELECTRIC",
+            36: "DETERMINE THE CHANGE IN RESISTANCE DUE TO TEMPERATURE",
+            37: "VERIFY THE CHARACTERISTICS OF SERIES PARALLEL COMBINATION OF RESISTORS",
+            38: "DETERMINE THE POLES & PLOT THE FIELD OF A MAGNET BAR",
+            39: "WIND A SOLENOID & DETERMINE THE MAGNETIC EFFECT OF ELECTRIC CURRENT",
+            40: "DETERMINE DIRECTION OF INDUCED EMF & CURRENT",
+            41: "PRACTICE ON GENERATION OF MUTUALLY INDUCED EMF",
+            42: "MEASURE THE RESISTANCE, IMPEDANCE AND DETERMINE INDUCTANCE OF CHOKE COILS IN DIFFERENT COMBINATIONS",
+            43: "IDENTIFY VARIOUS TYPES OF CAPACITORS, CHARGING / DISCHARGING AND TESTING",
+            44: "GROUP THE GIVEN CAPACITORS TO GET THE REQUIRED CAPACITY AND VOLTAGE RATING",
+            45: "MEASURE CURRENT, VOLTAGE AND PF AND DETERMINE THE CHARACTERISTICS OF RL, RC AND RLC IN AC SERIES CIRCUITS",
+            46: "MEASURE THE RESONANCE FREQUENCY IN AC SERIES CIRCUIT AND DETERMINE ITS EFFECT ON THE CIRCUIT",
+            47: "MEASURE CURRENT, VOLTAGE AND PF AND DETERMINE THE CHARACTERISTICS OF RL, RC AND RLC IN AC PARALLEL CIRCUITS",
+            48: "MEASURE THE RESONANCE FREQUENCY IN AC PARALLEL CIRCUIT AND DETERMINE ITS EFFECTS ON THE CIRCUIT",
+            49: "MEASURE POWER, ENERGY FOR LAGGING AND LEADING POWER FACTORS IN SINGLE PHASE CIRCUITS AND GRAPHICALLY",
+            50: "MEASURE CURRENT, VOLTAGE POWER, ENERGY AND POWER FACTOR IN THREE PHASE CIRCUITS",
+            51: "PRACTICE IMPROVEMENT OF PF BY USE OF CAPACITOR IN THREE PHASE CIRCUIT",
+            52: "ASCERTAIN USE OF NEUTRAL BY IDENTIFYING WIRES OF A 3- PHASE 4 WIRE SYSTEM AND FIND THE PHASE SEQUENCE",
+            53: "DETERMINE EFFECT OF BROKEN NEUTRAL WIRE IN THREE PHASE FOUR WIRE SYSTEM",
+            54: "DETERMINE THE RELATIONSHIP BETWEEN LINE AND PHASE VALUES FOR STAR AND DELTA CONNECTIONS",
+            55: "MEASURE THE POWER OF THREE PHASE CIRCUIT FOR BALANCED AND UNBALANCED LOADS",
+            56: "MEASURE CURRENT AND VOLTAGE OF TWO PHASES IN CASE OF ONE PHASE IS SHORT CIRCUITED IN THREE PHASE FOUR WIRE SYSTEM",
+            57: "USE OF VARIOUS TYPES OF CELLS",
+            58: "PRACTICE ON GROUPING OF CELLS FOR SPECIFIED VOLTAGE AND CURRENT UNDER DIFFERENT CONDITIONS AND CARE",
+            59: "PREPARE AND PRACTICE ON BATTERY CHARGING AND DETAILS OF CHARGING CIRCUIT",
+            60: "PRACTICE ON ROUTINE, CARE/ MAINTENANCE AND TESTING OF BATTERIES",
+            61: "DETERMINE THE NUMBER OF SOLAR CELLS IN SERIES / PARALLEL FOR GIVEN POWER REQUIREMENT",
+            62: "IDENTIFY VARIOUS CONDUITS AND DIFFERENT ELECTRICAL ACCESSORIES",
+            63: "PRACTICE CUTTING, THREADING OF DIFFERENT SIZES & LAYING INSTALLATIONS",
+            64: "PREPARE TEST BOARDS / EXTENSION BOARDS AND MOUNT ACCESSORIES LIKE LAMP HOLDERS, VARIOUS SWITCHES, SOCKETS, FUSES, RELAYS, MCB, ELCB, MCCB ETC",
+            65: "DRAW LAYOUTS AND PRACTICE IN PVC CASING-CAPPING, CONDUIT WIRING WITH MINIMUM TO MORE NUMBER OF POINTS OF MINIMUM 15 MTR LENGTH",
+            66: "WIRE UP PVC CONDUIT WIRING TO CONTROL ONE LAMP FROM TWO DIFFERENT PLACES",
+            67: "WIRE UP PVC CONDUIT WIRING TO CONTROL ONE LAMP FROM THREE DIFFERENT PLACES",
+            68: "WIRE UP PVC CONDUIT WIRING TO CONTROL ONE LAMP FROM THREE DIFFERENT PLACES",
+            69: "WIRE UP THE CONSUMERS MAIN BOARD WITH MCB & DB’S SWITCH AND DISTRIBUTION FUSE BOX",
+            70: "PREPARE AND MOUNT THE ENERGY METER BOARD",
+            71: "ESTIMATE THE COST/BILL OF MATERIAL FOR WIRING OF HOSTEL/ RESIDENTIAL BUILDING AND WORKSHOP",
+            72: "PRACTICE WIRING OF HOSTEL AND RESIDENTIAL BUILDING AS PER IE RULES",
+            73: "PRACTICE WIRING OF INSTITUTE AND WORKSHOP AS PER IE RULES",
+            74: "PRACTICE TESTING / FAULT DETECTION OF DOMESTIC AND INDUSTRIAL WIRING INSTALLATION AND REPAIR",
+            75: "PREPARE PIPE EARTHING AND MEASURE EARTH RESISTANCE BY EARTH TESTER / MEGGER",
+            76: "PREPARE PLATE EARTHING AND MEASURE EARTH RESISTANCE BY EARTH TESTER / MEGGER",
+            77: "TEST EARTH LEAKAGE BY ELCB AND RELAY",
+            78: "INSTALL LIGHT FITTING WITH REFLECTORS FOR DIRECT AND INDIRECT LIGHTING",
+            79: "GROUP DIFFERENT WATTAGE OF LAMPS IN SERIES FOR SPECIFIED VOLTAGE",
+            80: "PRACTICE INSTALLATION OF VARIOUS LAMPS E.G. FLUORESCENT TUBE, HP MERCURY VAPOUR, LP MERCURY VAPOUR, HP SODIUM VAPOUR, METAL HALIDE ETC",
+            81: "PREPARE DECORATIVE LAMP CIRCUIT TO PRODUCE ROTATING LIGHT EFFECT/RUNNING LIGHT",
+            82: "INSTALL LIGHT FITTING FOR SHOW CASE LIGHTING",
+            83: "PRACTICE ON VARIOUS ANALOG AND DIGITAL MEASURING INSTRUMENTS",
+            84: "PRACTICE ON MEASURING INSTRUMENTS IN SINGLE AND THREE PHASE CIRCUITS E.G. MULTI-METER, WATTMETER, ENERGY METER, PHASE SEQUENCE METER AND FREQUENCY METER ETC",
+            85: "MEASURE POWER IN THREE PHASE CIRCUIT USING TWO WATTMETER METHODS",
+            86: "MEASURE POWER FACTOR IN THREE PHASE CIRCUIT BY USING POWER FACTOR METER AND VERIFY THE SAME WITH VOLTMETER, AMMETER AND WATTMETER READINGS",
+            87: "MEASURE ELECTRICAL PARAMETERS USING TONG TESTER IN THREE PHASE CIRCUITS",
+            88: "DEMONSTRATE SMART METER, ITS PHYSICAL COMPONENTS AND COMMUNICATION COMPONENTS",
+            89: "PRACTICE FOR RANGE EXTENSION AND CALIBRATION OF VARIOUS MEASURING INSTRUMENTS",
+            90: "DETERMINE ERRORS IN RESISTANCE MEASUREMENT BY VOLTAGE DROP METHOD",
+            91: "TEST SINGLE PHASE ENERGY METER FOR ITS ERRORS",
+            92: "TEST SINGLE PHASE ENERGY METER FOR ITS ERRORS",
+            93: "DISMANTLE AND ASSEMBLE ELECTRICAL PARTS OF VARIOUS ELECTRICAL APPLIANCES",
+            94: "SERVICE AND REPAIR OF ELECTRIC IRON, ELECTRIC KETTLE, COOKING RANGE AND GEYSER",
+            95: "SERVICE AND REPAIR OF INDUCTION HEATER AND OVEN",
+            96: "SERVICE AND REPAIR OF MIXER AND GRINDER",
+            97: "SERVICE AND REPAIR OF WASHING MACHINE",
+            98: "VERIFY TERMINALS, IDENTIFY COMPONENTS AND CALCULATE TRANSFORMATION RATIO OF SINGLE-PHASE RANSFORMERS",
+            99: "PERFORM OC AND SC TEST TO ETERMINE AND EFFICIENCY OF SINGLE-PHASE TRANSFORMER",
+            100: "DETERMINE VOLTAGE REGULATION OF SINGLE-PHASE TRANSFORMER AT DIFFERENT LOADS AND POWER FACTORS",
+            101: "PERFORM SERIES AND PARALLEL OPERATION OF TWO SINGLE PHASE TRANSFORMERS",
+            102: "VERIFY THE TERMINALS AND ACCESSORIES OF THREE PHASE TRANSFORMER HT AND LT SIDE",
+            103: "PERFORM 3 PHASE OPERATION (I) DELTA-DELTA,(II) DELTA-STAR, (III) STAR-STAR,(IV) STAR-DELTA BY USE OF THREE SINGLE PHASE TRANSFORMERS",
+            104: "PERFORM TESTING OF TRANSFORMER OIL"
+        }; 
 
-        // Initialize Week Numbers in Entry & History
+        // Populate Week Dropdowns (1-104)
         const weekSelectEntry = document.getElementById('tool-week');
         const weekSelectHistory = document.getElementById('history-week');
-        
-        for(let i=1; i<=76; i++) {
-            let opt1 = document.createElement('option');
-            opt1.value = i;
-            opt1.innerText = "Week " + i;
-            weekSelectEntry.appendChild(opt1);
-
-            let opt2 = document.createElement('option');
-            opt2.value = i;
-            opt2.innerText = "Week " + i;
-            weekSelectHistory.appendChild(opt2);
+        for(let i=1; i<=104; i++) {
+            let opt1 = document.createElement('option'); opt1.value = i; opt1.innerText = "Week " + i; weekSelectEntry.appendChild(opt1);
+            let opt2 = document.createElement('option'); opt2.value = i; opt2.innerText = "Week " + i; weekSelectHistory.appendChild(opt2);
         }
 
         window.onload = function() { 
             fetchNotices(); 
+            // Default Admin Credentials (Local Storage) - RESET IF NEEDED
             if(!localStorage.getItem('adminCreds')) localStorage.setItem('adminCreds', JSON.stringify({id:'admin', pass:'12345'}));
-            if(!localStorage.getItem('staffCreds')) localStorage.setItem('staffCreds', JSON.stringify({id:'staff', pass:'12345'}));
         };
 
         function fetchNotices() {
@@ -422,6 +526,9 @@
         }
 
         let currentUserType = null;
+        let staffTrade = "";
+        let staffName = "";
+
         function showLogin(type) {
             currentUserType = type;
             document.getElementById('login-modal').style.display = 'flex';
@@ -432,18 +539,32 @@
             const id = document.getElementById('login-id').value;
             const pass = document.getElementById('login-pass').value;
             
-            const adminCreds = JSON.parse(localStorage.getItem('adminCreds'));
-            const staffCreds = JSON.parse(localStorage.getItem('staffCreds'));
-
-            if(currentUserType === 'staff' || currentUserType === 'admin') {
-                if(currentUserType === 'admin' && id === adminCreds.id && pass === adminCreds.pass) {
+            if(currentUserType === 'admin') {
+                const adminCreds = JSON.parse(localStorage.getItem('adminCreds'));
+                if(id === adminCreds.id && pass === adminCreds.pass) {
                     loginSuccess('admin');
-                } else if(currentUserType === 'staff' && id === staffCreds.id && pass === staffCreds.pass) {
-                    loginSuccess('staff');
                 } else {
-                    alert('Invalid Credentials');
+                    alert('Invalid Admin Credentials');
                 }
-            } else {
+            } 
+            else if(currentUserType === 'staff') {
+                document.querySelector('#login-modal button').innerText = "Verifying...";
+                // Check Staff in Google Sheet (Secure Server Check)
+                fetch(API_URL + `?action=staff_login&id=${id}&pass=${pass}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.querySelector('#login-modal button').innerText = "Login";
+                    if(data.status === 'success') {
+                        staffTrade = data.trade;
+                        staffName = data.name;
+                        loginSuccess('staff');
+                    } else {
+                        alert('Invalid Staff Credentials');
+                    }
+                });
+            } 
+            else {
+                // Student
                 fetch(API_URL + `?action=student_login&roll=${id}&pass=${pass}`).then(res => res.json()).then(data => {
                     if(data.status === 'success') {
                         document.getElementById('login-modal').style.display = 'none';
@@ -459,94 +580,98 @@
         function loginSuccess(role) {
             document.getElementById('login-modal').style.display = 'none';
             document.getElementById('home-section').style.display = 'none';
-            if(role === 'staff') document.getElementById('staff-panel').style.display = 'block';
+            if(role === 'staff') {
+                document.getElementById('staff-panel').style.display = 'block';
+                document.getElementById('staff-trade-display').innerText = staffTrade;
+                document.getElementById('staff-name-display').innerText = staffName;
+            }
             else document.getElementById('admin-panel').style.display = 'block';
         }
 
-        function openSettings() {
-            hideAllAdminSections();
-            document.getElementById('settings-area').style.display = 'block';
-            const ac = JSON.parse(localStorage.getItem('adminCreds'));
-            const sc = JSON.parse(localStorage.getItem('staffCreds'));
-            document.getElementById('new-admin-id').value = ac.id;
-            document.getElementById('new-admin-pass').value = ac.pass;
-            document.getElementById('new-staff-id').value = sc.id;
-            document.getElementById('new-staff-pass').value = sc.pass;
-        }
-
-        function saveCredentials() {
-            const aid = document.getElementById('new-admin-id').value;
-            const apass = document.getElementById('new-admin-pass').value;
-            const sid = document.getElementById('new-staff-id').value;
-            const spass = document.getElementById('new-staff-pass').value;
-            if(aid && apass && sid && spass) {
-                localStorage.setItem('adminCreds', JSON.stringify({id: aid, pass: apass}));
-                localStorage.setItem('staffCreds', JSON.stringify({id: sid, pass: spass}));
-                alert("Credentials Updated! Please login again.");
-                location.reload();
-            } else {
-                alert("All fields are required");
-            }
-        }
+        function logout() { location.reload(); }
 
         /* --- UNIFIED PANEL LOGIC --- */
         let activeTool = "";
         
         function hideAllAdminSections() {
+            // Hide all admin specific containers
             document.getElementById('entry-tool-container').style.display = 'none';
             document.getElementById('admin-tool-container').style.display = 'none';
             document.getElementById('progress-card-area').style.display = 'none';
             document.getElementById('settings-area').style.display = 'none';
+            document.getElementById('manage-staff-area').style.display = 'none';
+            
+            // Also hide the entry tool inside admin content area specifically
+            // (Since we move it around, ensuring it's hidden from admin view when switching tools is key)
+            if(document.getElementById('entry-tool-container').parentElement === document.getElementById('admin-content-area')) {
+                 document.getElementById('entry-tool-container').style.display = 'none';
+            }
         }
 
         // 1. DATA ENTRY
         function openEntryTool(tool) {
             activeTool = tool;
+            const entryContainer = document.getElementById('entry-tool-container');
+            
             if(currentUserType === 'staff') {
-                document.getElementById('staff-entry-area').innerHTML = document.getElementById('entry-tool-container').innerHTML;
+                // Move container to staff area
+                document.getElementById('staff-entry-area').appendChild(entryContainer);
                 document.getElementById('staff-entry-area').style.display = 'block';
+                entryContainer.style.display = 'block';
+                
+                const staffTradeSelect = entryContainer.querySelector('#tool-trade');
+                staffTradeSelect.value = staffTrade;
+                staffTradeSelect.disabled = true;
+                
+                setupEntryToolUI(entryContainer, tool);
             } else {
+                // Admin Area
                 hideAllAdminSections();
-                document.getElementById('entry-tool-container').style.display = 'block';
+                // Move container to admin content area if not there
+                document.getElementById('admin-content-area').appendChild(entryContainer);
+                entryContainer.style.display = 'block';
+                setupEntryToolUI(entryContainer, tool);
             }
-            
-            let title = "";
-            const container = currentUserType === 'staff' ? document.getElementById('staff-panel') : document.getElementById('admin-panel');
-            
+        }
+
+        function setupEntryToolUI(container, tool) {
             container.querySelector('#date-input-div').style.display = 'none';
             container.querySelector('#month-input-div').style.display = 'none';
             container.querySelector('#week-input-div').style.display = 'none';
 
-            if(tool === 'attendance') {
-                title = "Attendance Entry";
-                container.querySelector('#date-input-div').style.display = 'inline-block';
+            let title = "";
+            if(tool === 'attendance') { 
+                title = "Attendance Entry"; 
+                container.querySelector('#date-input-div').style.display = 'inline-block'; 
             }
-            else if(tool === 'monthly') {
-                title = "Monthly Marks Entry";
-                container.querySelector('#month-input-div').style.display = 'inline-block';
+            else if(tool === 'monthly') { 
+                title = "Monthly Marks Entry"; 
+                container.querySelector('#month-input-div').style.display = 'inline-block'; 
             }
-            else if(tool === 'quarterly') {
-                title = "Quarterly Marks Entry";
-                container.querySelector('#month-input-div').style.display = 'inline-block';
+            else if(tool === 'quarterly') { 
+                title = "Quarterly Marks Entry"; 
+                container.querySelector('#month-input-div').style.display = 'inline-block'; 
             }
-            else if(tool === 'job') {
-                title = "Job Evolution Entry";
-                container.querySelector('#week-input-div').style.display = 'inline-block';
+            else if(tool === 'job') { 
+                title = "Job Evolution Entry"; 
+                container.querySelector('#week-input-div').style.display = 'inline-block'; 
             }
             
             container.querySelector('#tool-title').innerText = title;
             container.querySelector('#entry-table').innerHTML = ''; 
         }
 
-        // 2. HISTORY & NOTICE
+        // 2. ADMIN HISTORY
         let adminAction = "";
         function openAdminTool(action) {
             adminAction = action;
             hideAllAdminSections();
-            document.getElementById('admin-tool-container').style.display = 'block';
+            // Move tool container to admin content area if not there
+            const histContainer = document.getElementById('admin-tool-container');
+            document.getElementById('admin-content-area').appendChild(histContainer);
+            histContainer.style.display = 'block';
+
             document.getElementById('admin-result-area').innerHTML = "";
-            
-            // Hide all filter inputs first
             document.getElementById('history-date-span').style.display = 'none';
             document.getElementById('history-month-span').style.display = 'none';
             document.getElementById('history-week-span').style.display = 'none';
@@ -560,15 +685,9 @@
                 document.getElementById('notice-form-area').style.display = 'none';
                 document.getElementById('history-title').innerText = action.replace('history_', '').toUpperCase();
                 
-                if(action === 'history_attendance') {
-                    document.getElementById('history-date-span').style.display = 'inline-block';
-                }
-                else if(action === 'history_monthly' || action === 'history_quarterly') {
-                    document.getElementById('history-month-span').style.display = 'inline-block';
-                }
-                else if(action === 'history_job') {
-                    document.getElementById('history-week-span').style.display = 'inline-block';
-                }
+                if(action === 'history_attendance') document.getElementById('history-date-span').style.display = 'inline-block';
+                else if(action === 'history_monthly' || action === 'history_quarterly') document.getElementById('history-month-span').style.display = 'inline-block';
+                else if(action === 'history_job') document.getElementById('history-week-span').style.display = 'inline-block';
             }
         }
 
@@ -577,16 +696,95 @@
         function setupProgressCard(trade) {
             selectedTradeForPC = trade;
             hideAllAdminSections();
-            document.getElementById('progress-card-area').style.display = 'block';
+            const pcContainer = document.getElementById('progress-card-area');
+            document.getElementById('admin-content-area').appendChild(pcContainer);
+            pcContainer.style.display = 'block';
+            
             document.getElementById('pc-trade').innerText = trade.toUpperCase();
             document.getElementById('pc-tbody').innerHTML = "";
         }
 
-        /* --- LOGIC FUNCTIONS --- */
+        // 4. ADMIN SETTINGS
+        function openSettings() {
+            hideAllAdminSections();
+            const setContainer = document.getElementById('settings-area');
+            document.getElementById('admin-content-area').appendChild(setContainer);
+            setContainer.style.display = 'block';
+
+            const ac = JSON.parse(localStorage.getItem('adminCreds'));
+            document.getElementById('new-admin-id').value = ac.id;
+            document.getElementById('new-admin-pass').value = ac.pass;
+        }
+
+        // 5. MANAGE STAFF (OPEN)
+        function openManageStaff() {
+            hideAllAdminSections();
+            const msContainer = document.getElementById('manage-staff-area');
+            document.getElementById('admin-content-area').appendChild(msContainer);
+            msContainer.style.display = 'block';
+            loadStaffList();
+        }
+
+        /* --- STAFF MANAGEMENT LOGIC (VIA API) --- */
+        function createStaff() {
+            const u = document.getElementById('create-staff-user').value;
+            const p = document.getElementById('create-staff-pass').value;
+            const n = document.getElementById('create-staff-name').value;
+            const t = document.getElementById('create-staff-trade').value;
+            if(!u || !p || !n) return alert("Enter details");
+            
+            fetch(API_URL, { method: "POST", body: JSON.stringify({type: "create_staff", username: u, password: p, trade: t, name: n}) })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.status);
+                loadStaffList();
+            });
+        }
+
+        function loadStaffList() {
+            document.getElementById('staff-list-display').innerHTML = "Loading...";
+            fetch(API_URL + "?action=get_staff_list")
+            .then(res => res.json())
+            .then(data => {
+                let html = "<table border='1'><tr><th>User</th><th>Name</th><th>Pass</th><th>Trade</th><th>Action</th></tr>";
+                data.forEach(s => {
+                    html += `<tr>
+                        <td>${s.username}</td><td>${s.name}</td><td>****</td><td>${s.trade}</td>
+                        <td><button style='background:red;color:white;' onclick="deleteStaff('${s.username}')">Delete</button></td>
+                    </tr>`;
+                });
+                html += "</table>";
+                document.getElementById('staff-list-display').innerHTML = html;
+            });
+        }
+
+        function deleteStaff(username) {
+            if(!confirm("Delete " + username + "?")) return;
+            fetch(API_URL, { method: "POST", body: JSON.stringify({type: "delete_staff", username: username}) })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.status);
+                loadStaffList();
+            });
+        }
+
+        function saveAdminCredentials() {
+            const aid = document.getElementById('new-admin-id').value;
+            const apass = document.getElementById('new-admin-pass').value;
+            if(aid && apass) {
+                localStorage.setItem('adminCreds', JSON.stringify({id: aid, pass: apass}));
+                alert("Admin Credentials Updated!");
+                location.reload();
+            }
+        }
+
+        /* --- DATA LOGIC --- */
         function loadStudentListForTool() {
-            const container = currentUserType === 'staff' ? document.getElementById('staff-panel') : document.getElementById('admin-panel');
+            // Container logic is now handled by moving the element, so we query the element directly
+            const container = document.getElementById('entry-tool-container');
             const trade = container.querySelector('#tool-trade').value;
             const unit = container.querySelector('#tool-unit').value;
+            
             fetch(API_URL + `?action=get_class_list&trade=${trade}&unit=${unit}`)
             .then(res => res.json())
             .then(students => {
@@ -596,29 +794,76 @@
                     thead = `<thead><tr><th>Roll</th><th>Name</th><th>Status</th></tr></thead>`;
                     students.forEach(s => rows += `<tr class="data-row" data-roll="${s.roll}" data-name="${s.name}" data-trade="${s.trade}" data-unit="${s.unit}"><td>${s.roll}</td><td>${s.name}</td><td><select class="inp-status"><option value="P">Present</option><option value="A">Absent</option></select></td></tr>`);
                 } else if(activeTool === 'monthly' || activeTool === 'quarterly') {
+                    // Added min and max attributes to inputs below
                     thead = `<thead><tr><th>Roll</th><th>Name</th><th>Prac(50)</th><th>Thry(20)</th><th>ED(20)</th><th>WCS(10)</th><th>Total</th></tr></thead>`;
-                    students.forEach(s => rows += `<tr class="data-row" data-roll="${s.roll}" data-name="${s.name}" data-trade="${s.trade}" data-unit="${s.unit}"><td>${s.roll}</td><td>${s.name}</td><td><input type="number" class="m-prac" oninput="calcTotal(this)"></td><td><input type="number" class="m-thry" oninput="calcTotal(this)"></td><td><input type="number" class="m-ed" oninput="calcTotal(this)"></td><td><input type="number" class="m-wcs" oninput="calcTotal(this)"></td><td><input type="text" class="m-total" readonly></td></tr>`);
+                    students.forEach(s => rows += `<tr class="data-row" data-roll="${s.roll}" data-name="${s.name}" data-trade="${s.trade}" data-unit="${s.unit}">
+                        <td>${s.roll}</td><td>${s.name}</td>
+                        <td><input type="number" min="0" max="50" class="m-prac" oninput="calcTotal(this)"></td>
+                        <td><input type="number" min="0" max="20" class="m-thry" oninput="calcTotal(this)"></td>
+                        <td><input type="number" min="0" max="20" class="m-ed" oninput="calcTotal(this)"></td>
+                        <td><input type="number" min="0" max="10" class="m-wcs" oninput="calcTotal(this)"></td>
+                        <td><input type="text" class="m-total" readonly></td>
+                    </tr>`);
                 } else if(activeTool === 'job') {
+                    // Added min and max attributes to inputs below
                     thead = `<thead><tr><th>Roll</th><th>Name</th><th>A(10)</th><th>B(15)</th><th>C(8)</th><th>D(7)</th><th>E(10)</th><th>Total</th></tr></thead>`;
-                    students.forEach(s => rows += `<tr class="data-row" data-roll="${s.roll}" data-name="${s.name}" data-trade="${s.trade}" data-unit="${s.unit}"><td>${s.roll}</td><td>${s.name}</td><td><input type="number" class="j-a" oninput="calcJobTotal(this)"></td><td><input type="number" class="j-b" oninput="calcJobTotal(this)"></td><td><input type="number" class="j-c" oninput="calcJobTotal(this)"></td><td><input type="number" class="j-d" oninput="calcJobTotal(this)"></td><td><input type="number" class="j-e" oninput="calcJobTotal(this)"></td><td><input type="text" class="j-total" readonly></td></tr>`);
+                    students.forEach(s => rows += `<tr class="data-row" data-roll="${s.roll}" data-name="${s.name}" data-trade="${s.trade}" data-unit="${s.unit}">
+                        <td>${s.roll}</td><td>${s.name}</td>
+                        <td><input type="number" min="0" max="10" class="j-a" oninput="calcJobTotal(this)"></td>
+                        <td><input type="number" min="0" max="15" class="j-b" oninput="calcJobTotal(this)"></td>
+                        <td><input type="number" min="0" max="8" class="j-c" oninput="calcJobTotal(this)"></td>
+                        <td><input type="number" min="0" max="7" class="j-d" oninput="calcJobTotal(this)"></td>
+                        <td><input type="number" min="0" max="10" class="j-e" oninput="calcJobTotal(this)"></td>
+                        <td><input type="text" class="j-total" readonly></td>
+                    </tr>`);
                 }
                 table.innerHTML = thead + `<tbody>${rows}</tbody>`;
             });
         }
 
         function calcTotal(elem) {
+            // -- UPDATED VALIDATION LOGIC --
+            let max = 100;
+            if(elem.classList.contains('m-prac')) max = 50;
+            else if(elem.classList.contains('m-thry')) max = 20;
+            else if(elem.classList.contains('m-ed')) max = 20;
+            else if(elem.classList.contains('m-wcs')) max = 10;
+
+            let valInput = Number(elem.value);
+            if(valInput > max) {
+                alert("Maximum marks allowed for this field is " + max);
+                elem.value = max; // Reset to max
+            }
+            if(valInput < 0) elem.value = 0; // Prevent negative
+            
             const row = elem.closest('tr');
             const val = (cls) => Number(row.querySelector(cls).value) || 0;
             row.querySelector('.m-total').value = val('.m-prac') + val('.m-thry') + val('.m-ed') + val('.m-wcs');
         }
+
         function calcJobTotal(elem) {
+            // -- UPDATED VALIDATION LOGIC --
+            let max = 100;
+            if(elem.classList.contains('j-a')) max = 10;
+            else if(elem.classList.contains('j-b')) max = 15;
+            else if(elem.classList.contains('j-c')) max = 8;
+            else if(elem.classList.contains('j-d')) max = 7;
+            else if(elem.classList.contains('j-e')) max = 10;
+
+            let valInput = Number(elem.value);
+            if(valInput > max) {
+                alert("Maximum marks allowed for this field is " + max);
+                elem.value = max; // Reset to max
+            }
+            if(valInput < 0) elem.value = 0; // Prevent negative
+
             const row = elem.closest('tr');
             const val = (cls) => Number(row.querySelector(cls).value) || 0;
             row.querySelector('.j-total').value = val('.j-a') + val('.j-b') + val('.j-c') + val('.j-d') + val('.j-e');
         }
 
         function submitStaffData() {
-            const container = currentUserType === 'staff' ? document.getElementById('staff-panel') : document.getElementById('admin-panel');
+            const container = document.getElementById('entry-tool-container');
             const rows = container.querySelectorAll('.data-row');
             let payload = { type: "", entries: [] };
 
@@ -688,15 +933,11 @@
                         }
                     }
                     
-                    // MONTHLY & QUARTERLY FILTER
                     if((sheetName === 'MONTHLY MARKS' || sheetName === 'QUARTERLY MARKS') && histMonth) {
-                        // Check if row matches selected month
                         if(!rowString.includes(histMonth)) match = false;
                     }
 
-                    // JOB EVOLUTION FILTER
                     if(sheetName === 'JOB EVOLUTION' && histWeek) {
-                        // Check for "Week X"
                         if(!rowString.includes("Week " + histWeek)) match = false;
                     }
 
@@ -727,7 +968,7 @@
                     document.getElementById('pc-name').innerText = student.name;
                     let html = "";
                     let exercises = selectedTradeForPC === 'Fitter' ? FITTER_EXERCISES : ELECT_EXERCISES;
-                    for(let w=1; w<=76; w++) {
+                    for(let w=1; w<=104; w++) {
                         let exName = exercises[w] || "";
                         html += `<tr>
                             <td>${w}</td>
